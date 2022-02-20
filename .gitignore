@@ -4,3 +4,4 @@ __pycache__
 
 store/*
 !store/.gitkeep
+!store/no-imagen.png

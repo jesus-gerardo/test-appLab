@@ -7,12 +7,13 @@
         <v-card-text>
             <v-row dense>
                 <v-col cols="12">
-                    <v-avatar size="60px">
-                        <img
-                            src="https://cdn.vuetifyjs.com/images/john.jpg"
-                            alt="avatar"
-                        >
-                    </v-avatar>
+                    <Croopie
+                        v-if="load"
+                        :onLoadImage="onLoadImage"
+                        :namePhoto="namePhoto"
+                        :_src="`${$axios.defaults.baseURL}/administrador/`"
+                        ref="crop"
+                    />
                 </v-col>
             </v-row>
         
@@ -100,7 +101,7 @@
             <v-btn color="" @click="open('main')" class="text-caption">
                 Cancelar
             </v-btn>
-            <v-btn color="success" class="text-caption">
+            <v-btn color="success" class="text-caption" @click="store">
                 {{action == 0 ? 'Agregar administrador':'Guardar cambios'}}
             </v-btn>
         </v-card-actions>
@@ -108,29 +109,37 @@
 </template>
 
 <script>
+    import Croopie from "../../../plugins/Croppie.vue"
     import {mapActions, mapState} from "vuex"
     export default {
         name:"PageForm",
         props:['row'],
+        components: {
+            Croopie
+        },
         data(){
             return{
                 action: 0,
+                load: false,
                 form:{
                     id:null,
-                    image: null,
                     nombre: null,
                     apellidos: null,
                     correo: null,
                     area_id: null,
                     estatus: null
-                }
+                },
+                file: null,
+                namePhoto: "no-imagen.png",
             }
         }, mounted(){
             this.action = 0; // update
             if(this.row != null){
                 this.action = 1; // update
                 this.form = Object.assign({}, this.row)
+                this.namePhoto = this.form.image
             }
+            this.load = true;
         },
         computed:{
             ...mapState({  
@@ -146,18 +155,29 @@
             open(page){
                 this.$emit('page', {page:page, row:null})
             },
+            onLoadImage(file) {
+                try {
+                    this.file = file;
+                    this.urlPhoto = URL.createObjectURL(file);
+                    this.$refs.crop.upload_file(this.urlPhoto);
+                } catch (error) {
+                    console.error(error)
+                }
+            },
             async store(){
                 try{
                     let form = new FormData();
                     for(let key in this.form){
                         form.append(key, this.form[key]);
                     }
-                    let {data} = await this.$axios.post('/administrador/store', form);
+                    if (this.file != null) {
+                        form.append("upload", this.file);
+                    }
+                    let {data} = await this.$axios.post('administrador/store', form);
                     if(!data.response){
                         return;
                     }
-                    this.close();
-                    this.getDataFromApi();
+                    this.open('main');    
                 }catch(exception){
                     console.log(exception)
                 }

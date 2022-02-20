@@ -7,7 +7,7 @@
         <v-toolbar flat dense>
             <v-text-field
                 label="Buscar"
-                v-model="query.name"
+                v-model="search"
                 outlined
                 dense
                 class="mt-7 mr-2"
@@ -62,7 +62,7 @@
                     </v-card-text>
 
                     <v-card-actions>
-                        <v-btn outlined @click="menu = false" class="text-caption">
+                        <v-btn outlined @click="clear" class="text-caption">
                             Limpiar
                         </v-btn>
                         <v-btn color="success" class="text-caption" @click="getDataFromApi()">
@@ -91,7 +91,7 @@
                 <template v-slot:[`item.fullname`]="{item}">
                     <v-avatar size="36px" class="mr-2">
                         <img
-                            src="https://cdn.vuetifyjs.com/images/john.jpg"
+                            :src="`${$axios.defaults.baseURL}/administrador/${item.image}`"
                             alt="avatar"
                         >
                     </v-avatar>
@@ -120,7 +120,7 @@
                                 </v-list-item-title>
                             </v-list-item>
 
-                            <v-list-item @click="remove(item)">
+                            <v-list-item @click="DialogRemove(item)">
                                 <v-list-item-title>
                                     <v-icon color="red"> mdi-trash-can </v-icon>
                                         Eliminar
@@ -131,6 +131,45 @@
                 </template>
             </v-data-table>
         </v-card-text>
+
+        <v-dialog v-model="dialog" width="350">
+            <v-card v-if="dialog">
+                <v-card-title class="text-h5 lighten-2">
+                    Eliminar administrador
+                </v-card-title>
+
+                <v-card-text>
+                    <v-row>
+                        <v-col cols="12">
+                            ¿Estas seguro de eliminar a este administrador?
+                        </v-col>
+                    </v-row>
+                    <v-row >
+                        <v-col cols="12">
+                            <v-avatar size="36px" class="mr-2">
+                                <img
+                                    :src="`${$axios.defaults.baseURL}/administrador/${admin.image}`"
+                                    alt="avatar"
+                                >
+                            </v-avatar>
+                        </v-col>
+                    </v-row>
+                    <v-row dense>
+                        <v-col cols="12">
+                            {{admin.correo}}
+                        </v-col>
+                    </v-row>
+                </v-card-text>
+
+                <v-divider></v-divider>
+
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn  text @click="dialog = false">CancelaR</v-btn>
+                    <v-btn color="success" text @click="remove">Eliminar</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-card>
 </template>
 
@@ -146,6 +185,7 @@
                     area: null,
                     estatus: null
                 },
+                search: '',
                 loading: true,
                 count: 0,
                 rows: [],
@@ -158,6 +198,9 @@
                     { text: 'Estatus', value: 'estado', sortable: false },
                     { text: 'Detalles', value: 'action', sortable: false }
                 ],
+
+                dialog: false,
+                admin: null
             }
         },
         computed:{
@@ -187,6 +230,7 @@
                     this.loading = true
                     
                     const {page, itemsPerPage } = this.options
+                    this.query.name = this.search.trim() == '' ? null : this.search 
                     let query = JSON.stringify(this.query);
                     let {data} = await this.$axios.get(`/administrador?query=${query}&limit=${itemsPerPage}&page=${page}`);
                     this.rows = data.data;
@@ -200,14 +244,27 @@
             open(page, row=null){
                 this.$emit('page', {page:page, row:row})
             },
-            clear(){
+            async clear(){
                 for(let key in this.query){
                     this.query[key] = null;
                 }
+                this.menu = false;
+                await this.getDataFromApi();
             },
-            async remove(row){
+            DialogRemove(row){
+                this.admin = row;
+                this.dialog = true
+            },
+            async remove(){
                 try{
-                    console.log(row)
+                    let {data} = await this.$axios.delete(`administrador/${this.admin.id}/delete`)
+                    this.dialog = false;
+                    if(data.response){
+                        await this.getDataFromApi();
+                        return;
+                    }
+
+
                 }catch(exception){
                     console.log(exception)
                 }

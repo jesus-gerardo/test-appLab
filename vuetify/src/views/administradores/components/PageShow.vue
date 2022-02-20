@@ -9,7 +9,7 @@
                 <v-col cols="12">
                     <v-avatar size="60px">
                         <img
-                            src="https://cdn.vuetifyjs.com/images/john.jpg"
+                            :src="`${$axios.defaults.baseURL}/administrador/${row.image}`"
                             alt="avatar"
                         >
                     </v-avatar>
