@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 
 import Login from "@/views/auth/login.vue";
 import Main from "@/views/drawer/main.vue";
+import Auth from "./../middleware/auth";
 
 import Administradores from "@/views/administradores/index.vue";
 
@@ -10,7 +11,7 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
-    name: 'Login',
+    name: 'login',
     component: Login
   },
   {
@@ -22,7 +23,10 @@ const routes = [
       {
         path: "administradores",
         name: "administradores",
-        component: Administradores
+        component: Administradores,
+        meta: {
+          middleware: Auth
+        }
       },
     ]
   }
@@ -33,5 +37,14 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
+
+router.beforeEach((to, from, next)=>{
+  if(to.meta.middleware){
+    const middle = to.meta.middleware;
+    const context = {to, from, next};
+    return middle({...context});
+  }
+  return next();
+})
 
 export default router;

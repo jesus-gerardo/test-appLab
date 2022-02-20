@@ -16,7 +16,6 @@ def index():
 
     rows = Administrador.query
     if query.get('name', None) is not None:
-        print("entro a este if")
         rows = rows.filter( Administrador.nombre.ilike(query.get('name')) )
         
     if query.get('area', None) is not None:
