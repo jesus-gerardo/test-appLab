@@ -1,13 +1,11 @@
-from flask_sqlalchemy import SQLAlchemy
 from dataclasses import dataclass
-
-db=SQLAlchemy()
+from utils.db import db
 
 @dataclass
 class Areas(db.Model):
     __tablename__ = 'areas'
 
-    id=db.Column(db.Integer, primary_key=True)
+    id=db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre=db.Column(db.String)
 
     @property
@@ -16,4 +14,3 @@ class Areas(db.Model):
             'id': self.id,
             'nombre': self.nombre
         }
-    
