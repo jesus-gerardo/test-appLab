@@ -1,7 +1,7 @@
 <template>
     <v-card dense>
         <v-card-title primary-title>
-            Agregar Administrador
+            {{action == 0 ? 'Agregar administrador': 'Editar administrador'}}
         </v-card-title>
 
         <v-card-text>
@@ -60,7 +60,7 @@
                     <v-row dense>
                         <v-col cols="12" class="text-body-2">
                             <v-select
-                                :items="[]"
+                                :items="areas"
                                 label="Área"
                                 outlined
                                 dense
@@ -76,10 +76,7 @@
                     <v-row dense>
                         <v-col cols="12" class="text-body-2">
                             <v-select
-                                :items="[
-                                    {id:0, name: 'Inactivo'},
-                                    {id:1, name: 'Activos'},
-                                ]"
+                                :items="estatus"
                                 label="Estatus"
                                 outlined
                                 dense
@@ -104,20 +101,23 @@
                 Cancelar
             </v-btn>
             <v-btn color="success" class="text-caption">
-                Editar administrador
+                {{action == 0 ? 'Agregar administrador':'Guardar cambios'}}
             </v-btn>
         </v-card-actions>
     </v-card>
 </template>
 
 <script>
+    import {mapActions, mapState} from "vuex"
     export default {
         name:"PageForm",
+        props:['row'],
         data(){
             return{
+                action: 0,
                 form:{
                     id:null,
-                    img: null,
+                    image: null,
                     nombre: null,
                     apellidos: null,
                     correo: null,
@@ -125,9 +125,42 @@
                     estatus: null
                 }
             }
+        }, mounted(){
+            this.action = 0; // update
+            if(this.row != null){
+                this.action = 1; // update
+                this.form = Object.assign({}, this.row)
+            }
+        },
+        computed:{
+            ...mapState({  
+                areas: state => state.areas,
+                estatus: state => state.estatus,
+            }),
+        }, beforeMount(){
+            this.getAreas();
         }, methods:{
+            ...mapActions([
+                'getAreas'
+            ]),
             open(page){
-                this.$emit('page', page)
+                this.$emit('page', {page:page, row:null})
+            },
+            async store(){
+                try{
+                    let form = new FormData();
+                    for(let key in this.form){
+                        form.append(key, this.form[key]);
+                    }
+                    let {data} = await this.$axios.post('/administrador/store', form);
+                    if(!data.response){
+                        return;
+                    }
+                    this.close();
+                    this.getDataFromApi();
+                }catch(exception){
+                    console.log(exception)
+                }
             },
         }
     }

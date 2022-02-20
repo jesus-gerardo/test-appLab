@@ -27,7 +27,7 @@
                             NOMBRES(s)
                         </v-col>
                         <v-col cols="12" class="text-body-1">
-                            Nombre del administrador
+                            {{row.nombre}}
                         </v-col>
                     </v-row>
                 </v-col>
@@ -38,7 +38,7 @@
                             APELLIDOS
                         </v-col>
                         <v-col cols="12" class="text-body-1">
-                            Apellidos de la persona
+                            {{row.apellidos}}
                         </v-col>
                     </v-row>
                 </v-col>
@@ -49,7 +49,7 @@
                             CORREO ELECTRÓNICO
                         </v-col>
                         <v-col cols="12" class="text-body-1">
-                            Nombre del administrador
+                            {{row.correo}}
                         </v-col>
                     </v-row>
 
@@ -61,7 +61,7 @@
                             ÁREA
                         </v-col>
                         <v-col cols="12" class="text-body-1">
-                            Recursos humanos
+                            {{row.area.nombre}}
                         </v-col>
                     </v-row>
 
@@ -73,7 +73,7 @@
                             ESTATUS
                         </v-col>
                         <v-col cols="12" class="text-body-1">
-                            Activo
+                            {{row.estatus == 1 ? 'Activo': 'Inactivo'}}
                         </v-col>
                     </v-row>
 
@@ -97,13 +97,10 @@
 <script>
     export default {
         name: "PageShow",
-        data(){
-            return {
-
-            }
-        }, methods:{
+        props:['row'],
+        methods:{
             open(page){
-                this.$emit('page', page)
+                this.$emit('page', {page:page, row:this.row})
             },
         }
     }

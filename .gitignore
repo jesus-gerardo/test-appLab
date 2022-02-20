@@ -1,3 +1,6 @@
 frond/node_modules
 
 __pycache__
+
+store/*
+!store/.gitkeep

@@ -12,7 +12,6 @@
                 dense
                 class="mt-7 mr-2"
                 prepend-inner-icon="mdi-magnify"
-                
             ></v-text-field>
             <v-btn class="text-caption mr-2" @click="getDataFromApi()"> Buscar</v-btn>
             <v-menu
@@ -36,7 +35,7 @@
                         <v-row dense>
                             <v-col cols="12">
                                 <v-select
-                                    :items="[]"
+                                    :items="areas"
                                     label="Áreas"
                                     outlined
                                     dense
@@ -50,10 +49,7 @@
                         <v-row dense>
                             <v-col cols="12">
                                 <v-select
-                                    :items="[
-                                        {id:0, name: 'Inactivo'},
-                                        {id:1, name: 'Activos'},
-                                    ]"
+                                    :items="estatus"
                                     label="Estatus"
                                     outlined
                                     dense
@@ -66,19 +62,17 @@
                     </v-card-text>
 
                     <v-card-actions>
-                        <!-- <v-spacer></v-spacer> -->
-                        <v-btn flat @click="menu = false" class="text-caption">
+                        <v-btn outlined @click="menu = false" class="text-caption">
                             Limpiar
                         </v-btn>
-
-                        <v-btn color="success" flat class="text-caption" @click="getDataFromApi()">
+                        <v-btn color="success" class="text-caption" @click="getDataFromApi()">
                             aplicar filtro
                         </v-btn>
                     </v-card-actions>
                 </v-card>
             </v-menu>
             <v-spacer></v-spacer>
-            <v-btn color="success" @click="open('show')" class="text-caption">
+            <v-btn color="success" @click="open('form')" class="text-caption">
                 Agregar nuevo admin
             </v-btn>
         </v-toolbar>
@@ -119,7 +113,7 @@
                         </template>
 
                         <v-list>
-                            <v-list-item @click="open(item)">
+                            <v-list-item @click="open('show', item)">
                                 <v-list-item-title>
                                     <v-icon color="blue"> mdi-pen </v-icon>
                                         Editar
@@ -141,8 +135,10 @@
 </template>
 
 <script>
+    import {mapActions, mapState} from "vuex"
     export default {
         name:'PageMain',
+        props:['row'],
         data () {
             return {
                 query:{
@@ -164,6 +160,12 @@
                 ],
             }
         },
+        computed:{
+            ...mapState({  
+                areas: state => state.areas,
+                estatus: state => state.estatus,
+            }),
+        },
         watch: {
             options: {
                 handler () {
@@ -172,7 +174,13 @@
                 deep: true,
             },
         },
+        beforeMount(){
+            this.getAreas();
+        },
         methods: {
+            ...mapActions([
+                'getAreas'
+            ]),
             async getDataFromApi () {
                 try{
                     this.menu = false
@@ -189,41 +197,12 @@
                     console.error(exception);
                 }
             },
-            open(page){
-                this.$emit('page', page)
+            open(page, row=null){
+                this.$emit('page', {page:page, row:row})
             },
-            close(){
-                for(let key in this.form){
-                    this.form[key] = null;
-                }
-                this.dialog = false;
-            },
-            async store(){
-                try{
-                    let form = new FormData();
-                    for(let key in this.form){
-                        form.append(key, this.form[key]);
-                    }
-                    let {data} = await this.$axios.post('/catalogo/salones', form);
-                    if(!data.response){
-                        return;
-                    }
-                    this.close();
-                    this.getDataFromApi();
-                }catch(exception){
-                    console.log(exception)
-                }
-            },
-            async updated(){
-                try{
-                    let {data} = await this.$axios.put(`/catalogo/salones/${this.form.id}`, this.form);
-                    if(!data.response){
-                        return;
-                    }
-                    this.close();
-                    this.getDataFromApi();
-                }catch(exception){
-                    console.log(exception)
+            clear(){
+                for(let key in this.query){
+                    this.query[key] = null;
                 }
             },
             async remove(row){

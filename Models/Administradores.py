@@ -10,6 +10,7 @@ class Administrador(db.Model):
     __tablename__ = "administradores"
 
     id=db.Column(db.Integer, primary_key=True, autoincrement=True)
+    image=db.Column(db.String)
     nombre=db.Column(db.String)
     apellidos=db.Column(db.String)
     correo=db.Column(db.String, unique=True)
@@ -21,6 +22,7 @@ class Administrador(db.Model):
     def serialize(self):
         return {
             'id' : self.id,
+            'image' : self.image,
             'nombre' : self.nombre,
             'apellidos' : self.apellidos,
             'correo' : self.correo,

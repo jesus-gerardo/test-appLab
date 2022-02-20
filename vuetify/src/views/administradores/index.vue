@@ -6,7 +6,7 @@
             </template>
         </v-breadcrumbs>
 
-        <component :is="listaPage[page].component" @page="change"></component>
+        <component :is="listaPage[page].component" @page="change" :row="context"></component>
     </div>
 </template>
 
@@ -43,12 +43,13 @@
                         href: '#',
                     },
                 ],
+                context: null
             }
         },
         methods: {
-            change(page){
-                console.log(page)
-                this.page = page;
+            change(context){
+                this.context = context.row
+                this.page = context.page;
             }
         },
     }

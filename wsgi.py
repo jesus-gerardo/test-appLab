@@ -15,8 +15,8 @@ jwt = JWTManager(app)
 SQLAlchemy(app)
 
 
-# app.register_blueprint(areas_bp, url_prefix='/areas')
 app.register_blueprint(auth, url_prefix='/auth')
+app.register_blueprint(areas_bp, url_prefix='/areas')
 app.register_blueprint(administrador_bp, url_prefix='/administrador')
 
 @app.route("/")

@@ -1,10 +1,10 @@
-from itertools import count
 from flask import jsonify, request
-from sqlalchemy import null
 from Models.Administradores import Administrador
 from utils.db import db
 from flask_jwt_extended import jwt_required
+# from werkzeug import secure_filename
 import json
+import os
 
 # @jwt_required()
 def index():
@@ -13,8 +13,7 @@ def index():
     page = request.args.get('page', default=1, type=int)
     limit = request.args.get('limit', default=5, type=int)
     query = json.loads(request.args.get('query'))
-    print(query)
-    
+
     rows = Administrador.query
     # if query['name'] is not None or query['name'] is not '' :
     #     rows.filter( Administrador.nombre.like(query['name']) )
@@ -33,9 +32,12 @@ def index():
 # @jwt_required()
 def store():
     try:
-        # file = request.file('image')
-        # file.save()
+        file = request.files['image']
+        name = file.filename
+        file.save(os.path.join(os.path.abspath( os.path.dirname('') ),'store', name)) # Then save the file
+
         admin = Administrador(
+            image = name, 
             nombre = request.form['nombre'],
             apellidos = request.form['apellidos'],
             correo = request.form['correo'],
@@ -48,11 +50,6 @@ def store():
     except:
         db.session.rollback()
         return jsonify(response=False)
-
-# @jwt_required()
-def update(id):
-    admin = Administrador.query.get(id)
-    return jsonify(admin.serialize)
 
 # @jwt_required()
 def remove(id):
