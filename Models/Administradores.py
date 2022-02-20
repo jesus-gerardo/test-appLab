@@ -10,10 +10,10 @@ class Administrador(db.Model):
     __tablename__ = "administradores"
 
     id=db.Column(db.Integer, primary_key=True, autoincrement=True)
-    image=db.Column(db.String)
-    nombre=db.Column(db.String)
-    apellidos=db.Column(db.String)
-    correo=db.Column(db.String, unique=True)
+    image=db.Column(db.String(200), nullable=True)
+    nombre=db.Column(db.String(100))
+    apellidos=db.Column(db.String(100))
+    correo=db.Column(db.String(50), unique=True)
     area_id=db.Column(db.Integer, db.ForeignKey('areas.id'))
     estatus=db.Column(db.Integer)
     area=relationship(Areas, backref='administradores', uselist=False)

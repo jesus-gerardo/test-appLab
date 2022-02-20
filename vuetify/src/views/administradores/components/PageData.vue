@@ -170,6 +170,10 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
+
+        <v-overlay :value="overlay" :z-index="9999">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
     </v-card>
 </template>
 
@@ -200,7 +204,8 @@
                 ],
 
                 dialog: false,
-                admin: null
+                admin: null,
+                overlay: false
             }
         },
         computed:{
@@ -228,15 +233,17 @@
                 try{
                     this.menu = false
                     this.loading = true
-                    
+                    this.overlay = true;
                     const {page, itemsPerPage } = this.options
                     this.query.name = this.search.trim() == '' ? null : this.search 
                     let query = JSON.stringify(this.query);
                     let {data} = await this.$axios.get(`/administrador?query=${query}&limit=${itemsPerPage}&page=${page}`);
+                    this.overlay = false;
                     this.rows = data.data;
                     this.count = data.count;
                     this.loading = false;
                 }catch(exception){
+                    this.overlay = false;
                     this.loading = false;
                     console.error(exception);
                 }
@@ -257,15 +264,16 @@
             },
             async remove(){
                 try{
+                    this.overlay = true;
                     let {data} = await this.$axios.delete(`administrador/${this.admin.id}/delete`)
+                    this.overlay = false;
                     this.dialog = false;
                     if(data.response){
                         await this.getDataFromApi();
                         return;
                     }
-
-
                 }catch(exception){
+                    this.overlay = false;
                     console.log(exception)
                 }
             }

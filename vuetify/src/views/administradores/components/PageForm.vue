@@ -5,96 +5,103 @@
         </v-card-title>
 
         <v-card-text>
-            <v-row dense>
-                <v-col cols="12">
-                    <Croopie
-                        v-if="load"
-                        :onLoadImage="onLoadImage"
-                        :namePhoto="namePhoto"
-                        :_src="`${$axios.defaults.baseURL}/administrador/`"
-                        ref="crop"
-                    />
-                </v-col>
-            </v-row>
-        
-            <v-row class="mt-3">
-                <v-col cols="12" sm="12" md="6" lg="4">
-                    <v-row dense>
-                        <v-col cols="12" class="text-body-2">
-                            <v-text-field
-                                v-model="form.nombre"
-                                label="Nombre(s)"
-                                outlined
-                                dense
-                            ></v-text-field>
-                        </v-col>
-                    </v-row>
-                </v-col>
+            <v-form ref="admin">
+                <v-row dense>
+                    <v-col cols="12">
+                        <Croopie
+                            v-if="load"
+                            :onLoadImage="onLoadImage"
+                            :namePhoto="namePhoto"
+                            :_src="`${$axios.defaults.baseURL}/administrador/`"
+                            ref="crop"
+                        />
+                    </v-col>
+                </v-row>
+            
+                <v-row class="mt-3">
+                    <v-col cols="12" sm="12" md="6" lg="4">
+                        <v-row dense>
+                            <v-col cols="12" class="text-body-2">
+                                <v-text-field
+                                    v-model="form.nombre"
+                                    label="Nombre(s)"
+                                    outlined
+                                    dense
+                                    :rules="[rules.required]"
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                    </v-col>
 
-                <v-col cols="12" sm="12" md="6" lg="4">
-                    <v-row dense>
-                        <v-col cols="12" class="text-body-2">
-                            <v-text-field
-                                v-model="form.apellidos"
-                                label="Apellidos"
-                                outlined
-                                dense
-                            ></v-text-field>
-                        </v-col>
-                    </v-row>
-                </v-col>
+                    <v-col cols="12" sm="12" md="6" lg="4">
+                        <v-row dense>
+                            <v-col cols="12" class="text-body-2">
+                                <v-text-field
+                                    v-model="form.apellidos"
+                                    label="Apellidos"
+                                    outlined
+                                    dense
+                                    :rules="[rules.required]"
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                    </v-col>
 
-                <v-col cols="12" sm="12" md="6" lg="4">
-                    <v-row dense>
-                        <v-col cols="12" class="text-body-2">
-                            <v-text-field
-                                v-model="form.correo"
-                                label="Correo electrónico"
-                                outlined
-                                dense
-                            ></v-text-field>
-                        </v-col>
-                    </v-row>
-                </v-col>
+                    <v-col cols="12" sm="12" md="6" lg="4">
+                        <v-row dense>
+                            <v-col cols="12" class="text-body-2">
+                                <v-text-field
+                                    v-model="form.correo"
+                                    label="Correo electrónico"
+                                    outlined
+                                    dense
+                                    :rules="[rules.required, rules.email]"
+                                ></v-text-field>
+                            </v-col>
+                        </v-row>
+                    </v-col>
 
-                <v-col cols="12" sm="12" md="6" lg="4">
-                    <v-row dense>
-                        <v-col cols="12" class="text-body-2">
-                            <v-select
-                                :items="areas"
-                                label="Área"
-                                outlined
-                                dense
-                                item-value="id"
-                                item-text="nombre"
-                                v-model="form.area_id"
-                            ></v-select>
-                        </v-col>
-                    </v-row>
-                </v-col>
+                    <v-col cols="12" sm="12" md="6" lg="4">
+                        <v-row dense>
+                            <v-col cols="12" class="text-body-2">
+                                <v-select
+                                    :items="areas"
+                                    label="Área"
+                                    outlined
+                                    dense
+                                    item-value="id"
+                                    item-text="nombre"
+                                    v-model="form.area_id"
+                                    :rules="[rules.required]"
+                                ></v-select>
+                            </v-col>
+                        </v-row>
+                    </v-col>
 
-                <v-col cols="12" sm="12" md="6" lg="4">
-                    <v-row dense>
-                        <v-col cols="12" class="text-body-2">
-                            <v-select
-                                :items="estatus"
-                                label="Estatus"
-                                outlined
-                                dense
-                                item-value="id"
-                                item-text="name"
-                                v-model="form.estatus"
-                            ></v-select>
-                        </v-col>
-                    </v-row>
-                </v-col>
-            </v-row>
+                    <v-col cols="12" sm="12" md="6" lg="4">
+                        <v-row dense>
+                            <v-col cols="12" class="text-body-2">
+                                <v-select
+                                    :items="estatus"
+                                    label="Estatus"
+                                    outlined
+                                    dense
+                                    item-value="id"
+                                    item-text="name"
+                                    v-model="form.estatus"
+                                    :rules="[rules.required]"
+                                ></v-select>
+                            </v-col>
+                        </v-row>
+                    </v-col>
+                </v-row>
 
-            <v-row dense>
-                <v-col cols="12">
-                    <v-divider></v-divider>
-                </v-col>
-            </v-row>
+                <v-row dense>
+                    <v-col cols="12">
+                        <v-divider></v-divider>
+                    </v-col>
+                </v-row>
+            </v-form>
         </v-card-text>
         
         <v-card-actions>
@@ -105,15 +112,21 @@
                 {{action == 0 ? 'Agregar administrador':'Guardar cambios'}}
             </v-btn>
         </v-card-actions>
+
+        <v-overlay :value="overlay" :z-index="9999">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
     </v-card>
 </template>
 
 <script>
-    import Croopie from "../../../plugins/Croppie.vue"
+    import {RULES} from "./../../../plugins/rules";
+    import Croopie from "../../../plugins/Croppie.vue";
     import {mapActions, mapState} from "vuex"
     export default {
         name:"PageForm",
         props:['row'],
+        mixins: [RULES],
         components: {
             Croopie
         },
@@ -131,6 +144,7 @@
                 },
                 file: null,
                 namePhoto: "no-imagen.png",
+                overlay: false
             }
         }, mounted(){
             this.action = 0; // update
@@ -166,6 +180,11 @@
             },
             async store(){
                 try{
+                    let valid = this.$refs.admin.validate();
+                    if (!valid) {
+                        return false;
+                    }
+                    this.overlay = true;
                     let form = new FormData();
                     for(let key in this.form){
                         form.append(key, this.form[key]);
@@ -174,11 +193,13 @@
                         form.append("upload", this.file);
                     }
                     let {data} = await this.$axios.post('administrador/store', form);
+                    this.overlay = false;
                     if(!data.response){
                         return;
                     }
                     this.open('main');    
                 }catch(exception){
+                    this.overlay = false;
                     console.log(exception)
                 }
             },

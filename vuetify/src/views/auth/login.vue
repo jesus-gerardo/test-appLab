@@ -12,6 +12,7 @@
                                     v-model="email"
                                     label="Email"
                                     dense
+                                    :rules="[rules.required, rules.email]"
                                 ></v-text-field>
                             </v-col>
                         </v-row>
@@ -23,6 +24,7 @@
                                     label="Password"
                                     type="password"
                                     dense
+                                    :rules="[rules.required]"
                                 ></v-text-field>
                             </v-col>
                         </v-row>
@@ -36,30 +38,44 @@
                 </v-card-actions>
             </v-card>
         </v-layout>
+
+        <v-overlay :value="overlay" :z-index="9999">
+            <v-progress-circular indeterminate size="64"></v-progress-circular>
+        </v-overlay>
     </v-container>
 </template>
 
 <script>
+    import {RULES} from "./../../plugins/rules";
     export default {
         name: "Login",
+        mixins: [RULES],
         data(){
             return {
                 email: null,
                 password: null,
+                overlay: false
             }
         }, methods: {
             async login(){
                 try{
+                    let valid = this.$refs.login.validate();
+                    if (!valid) {
+                        return false;
+                    }
+                    this.overlay = true;
                     let form = new FormData();
                     form.append('email', this.email);
                     form.append('password', this.password);
                     let {data} = await this.$axios.post("/auth/login", form);
+                    this.overlay = false;
                     if(!data.response){
                         return;
                     }
                     localStorage.setItem('token', `Bearer ${data.token}`);
                     this.$router.push({name:'admin'});
                 }catch(exception){
+                    this.overlay = false;
                     console.error(exception);
                 }
             }

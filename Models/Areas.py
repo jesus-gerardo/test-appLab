@@ -6,7 +6,7 @@ class Areas(db.Model):
     __tablename__ = 'areas'
 
     id=db.Column(db.Integer, primary_key=True, autoincrement=True)
-    nombre=db.Column(db.String)
+    nombre=db.Column(db.String(50))
 
     @property
     def serialize(self):
