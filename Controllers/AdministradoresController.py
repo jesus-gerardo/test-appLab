@@ -35,9 +35,7 @@ def get_image(file):
 @jwt_required()
 def store():
     try:
-        print(request.form.get('id', None))
-        admin = Administrador.query.get(request.form['id'])
-        if admin is None:
+        if request.form.get('id', None) is None:
             admin = Administrador(
                 nombre = request.form['nombre'],
                 apellidos = request.form['apellidos'],
@@ -47,6 +45,7 @@ def store():
             )
             db.session.add(admin)
         else:
+            admin = Administrador.query.get(request.form.get('id'))
             admin.nombre = request.form['nombre']
             admin.apellidos = request.form['apellidos']
             admin.correo = request.form['correo']
@@ -62,9 +61,9 @@ def store():
 
         db.session.commit()
         return jsonify(response=True)
-    except:
+    except Exception as error:
         db.session.rollback()
-        return jsonify(response=False)
+        return jsonify(response=False, error=str(error))
 
 @jwt_required()
 def remove(id):

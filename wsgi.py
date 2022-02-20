@@ -6,6 +6,7 @@ from Routers.auth import auth
 from utils.db import db
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from Routers.main import spa_controller
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -14,14 +15,10 @@ CORS(app)
 jwt = JWTManager(app)
 SQLAlchemy(app)
 
-
 app.register_blueprint(auth, url_prefix='/auth')
 app.register_blueprint(areas_bp, url_prefix='/areas')
 app.register_blueprint(administrador_bp, url_prefix='/administrador')
-
-@app.route("/")
-def index():
-    return jsonify({'message': "access denied"})
+app.register_blueprint(spa_controller)
 
 with app.app_context():
     db.create_all()

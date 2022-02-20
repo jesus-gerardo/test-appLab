@@ -10,7 +10,7 @@ import router from "./../router/index";
 // axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
 
 let config = {
-  baseURL: process.env.URL_API || "http://127.0.0.1:5000"
+  baseURL: process.env.VUE_APP_URL || "http://127.0.0.1:5000"
   // timeout: 60 * 1000, // Timeout
   // withCredentials: true, // Check cross-site Access-Control
 };

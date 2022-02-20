@@ -186,6 +186,11 @@
                     }
                     this.overlay = true;
                     let form = new FormData();
+
+                    if(this.form.id == null){
+                        delete this.form.id;
+                    }
+
                     for(let key in this.form){
                         form.append(key, this.form[key]);
                     }
