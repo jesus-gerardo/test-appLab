@@ -47,20 +47,18 @@
                 email: null,
                 password: null,
             }
-        }, mounted() {
-            console.log(process.env.URL_API)
-        },methods: {
+        }, methods: {
             async login(){
                 try{
                     let form = new FormData();
                     form.append('email', this.email);
                     form.append('password', this.password);
                     let {data} = await this.$axios.post("/auth/login", form);
-                    if(!data.success){
+                    if(!data.response){
                         return;
                     }
                     localStorage.setItem('token', `Bearer ${data.token}`);
-                    this.$router.push({name:'dashboard'});
+                    this.$router.push({name:'admin'});
                 }catch(exception){
                     console.error(exception);
                 }

@@ -6,13 +6,15 @@ class User(db.Model):
     __tablename__ = "user"
 
     id = db.Column(db.Integer, primary_key=True)
-    nick = db.Column(db.String)
+    name = db.Column(db.String)
+    password = db.Column(db.String)
     email = db.Column(db.String)
 
     @property
     def serialize(self):
         return {
             'id': self.id,
-            'nick': self.nick,
+            'name': self.name,
+            'password': self.password,
             'email': self.email
         }

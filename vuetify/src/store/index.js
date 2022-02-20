@@ -31,7 +31,7 @@ export default new Vuex.Store({
   actions: {
     async getUser(context){
       try{
-        let {data} = await window.axios.get(`user`);
+        let {data} = await window.axios.get(`auth/user`);
         context.commit('getUser', data);
       }catch(exception){
         console.error(exception);

@@ -7,8 +7,8 @@
                 </v-list-item-avatar>
 
                 <v-list-item-content>
-                    <v-list-item-title v-text="user.user.name"></v-list-item-title>
-                    <v-list-item-subtitle> Directivo, docente </v-list-item-subtitle>
+                    <v-list-item-title>Admin</v-list-item-title>
+                    <!-- <v-list-item-subtitle> Directivo, docente </v-list-item-subtitle> -->
                 </v-list-item-content>
 
                 <v-btn icon><v-icon>mdi-exit-to-app</v-icon></v-btn>
@@ -69,19 +69,12 @@
                 drawer: true,
                 mini: true,
                 items: [
-                    { title: 'Dashboard', icon: 'mdi-home', name:"dashboard" ,children: [] },
-                    { title: 'Configuraciones', icon: 'mdi-cog', children: []},
-                    { title: 'Maestros', icon: 'mdi-account-tie', children: []},
-                    { title: 'Alumnos', icon: 'mdi-account-school', name: 'alumnos', children: []},
-                    { title: 'Catalogos', icon: 'mdi-view-list', children: [
-                        {title: 'Salones', icon: 'mdi-home-city', name:"salones"},
-                        {title: 'Asignaturas', icon: 'mdi-clipboard-text-outline',  name:"materias" },
-                    ] },
+                    { title: 'Administradores', icon: 'mdi-home', name:"administradores" ,children: [] },
                 ],
                 
             }
         }, beforeMount(){
-            this.getUser();
+            // this.getUser();
         }, computed:{
             ...mapState({  
                 user: state => state.user

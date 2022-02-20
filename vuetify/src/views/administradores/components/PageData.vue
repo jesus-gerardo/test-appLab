@@ -1,0 +1,242 @@
+<template>
+    <v-card flat dense>
+        <v-card-title primary-title>
+            Administradores de la consola
+        </v-card-title>
+
+        <v-toolbar flat dense>
+            <v-text-field
+                label="Buscar"
+                v-model="query.name"
+                outlined
+                dense
+                class="mt-7 mr-2"
+                prepend-inner-icon="mdi-magnify"
+                
+            ></v-text-field>
+            <v-btn class="text-caption mr-2" @click="getDataFromApi()"> Buscar</v-btn>
+            <v-menu
+                v-model="menu"
+                :close-on-content-click="false"
+                :nudge-width="300"
+                offset-y
+            >
+                <template v-slot:activator="{ on, attrs }">
+                    <v-btn color="success" v-bind="attrs" v-on="on" class="mr-2">
+                        <v-icon >mdi-filter-outline</v-icon>
+                    </v-btn>
+                </template>
+
+                <v-card>
+                    <v-card-title primary-title class="text-overline">
+                        Filtros de búsqueda
+                    </v-card-title>
+
+                    <v-card-text>
+                        <v-row dense>
+                            <v-col cols="12">
+                                <v-select
+                                    :items="[]"
+                                    label="Áreas"
+                                    outlined
+                                    dense
+                                    item-value="id"
+                                    item-text="nombre"
+                                    v-model="query.area"
+                                ></v-select>
+                            </v-col>
+                        </v-row>
+
+                        <v-row dense>
+                            <v-col cols="12">
+                                <v-select
+                                    :items="[
+                                        {id:0, name: 'Inactivo'},
+                                        {id:1, name: 'Activos'},
+                                    ]"
+                                    label="Estatus"
+                                    outlined
+                                    dense
+                                    item-value="id"
+                                    item-text="name"
+                                    v-model="query.estatus"
+                                ></v-select>
+                            </v-col>
+                        </v-row>
+                    </v-card-text>
+
+                    <v-card-actions>
+                        <!-- <v-spacer></v-spacer> -->
+                        <v-btn flat @click="menu = false" class="text-caption">
+                            Limpiar
+                        </v-btn>
+
+                        <v-btn color="success" flat class="text-caption" @click="getDataFromApi()">
+                            aplicar filtro
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-menu>
+            <v-spacer></v-spacer>
+            <v-btn color="success" @click="open('show')" class="text-caption">
+                Agregar nuevo admin
+            </v-btn>
+        </v-toolbar>
+
+        <v-card-text>
+            <v-data-table
+                calculate-widths
+                fixed-header
+                :headers="headers"
+                :items="rows"
+                :options.sync="options"
+                :server-items-length="count"
+                :loading="loading"
+                flat
+            >
+                <template v-slot:[`item.fullname`]="{item}">
+                    <v-avatar size="36px" class="mr-2">
+                        <img
+                            src="https://cdn.vuetifyjs.com/images/john.jpg"
+                            alt="avatar"
+                        >
+                    </v-avatar>
+                    {{item.nombre}} {{item.apellidos}}
+                </template>
+
+                <template v-slot:[`item.estado`]="{item}">
+                    <v-chip :color="item.estatus == 1 ? 'success': 'error'">{{item.estatus == 1 ? 'Activo': 'Inactivo'}}</v-chip>
+                </template>
+
+                <template v-slot:[`item.action`]="{ item }">
+                    <v-menu bottom :close-on-click="true">
+                        <template v-slot:activator="{ on, attrs }">
+                            <v-btn dark icon v-bind="attrs" v-on="on">
+                                <v-icon color="grey" v-on="on">
+                                    mdi-dots-vertical
+                                </v-icon>
+                            </v-btn>
+                        </template>
+
+                        <v-list>
+                            <v-list-item @click="open(item)">
+                                <v-list-item-title>
+                                    <v-icon color="blue"> mdi-pen </v-icon>
+                                        Editar
+                                </v-list-item-title>
+                            </v-list-item>
+
+                            <v-list-item @click="remove(item)">
+                                <v-list-item-title>
+                                    <v-icon color="red"> mdi-trash-can </v-icon>
+                                        Eliminar
+                                </v-list-item-title>
+                            </v-list-item>
+                        </v-list>
+                    </v-menu>
+                </template>
+            </v-data-table>
+        </v-card-text>
+    </v-card>
+</template>
+
+<script>
+    export default {
+        name:'PageMain',
+        data () {
+            return {
+                query:{
+                    name: null,
+                    area: null,
+                    estatus: null
+                },
+                loading: true,
+                count: 0,
+                rows: [],
+                options: {},
+                menu: false,
+                headers: [
+                    { text: 'Administrador', value:'fullname', sortable: false  },
+                    { text: 'Área', value: 'area.nombre' },
+                    { text: 'Correo electrico', value: 'correo', },
+                    { text: 'Estatus', value: 'estado', sortable: false },
+                    { text: 'Detalles', value: 'action', sortable: false }
+                ],
+            }
+        },
+        watch: {
+            options: {
+                handler () {
+                    this.getDataFromApi()
+                },
+                deep: true,
+            },
+        },
+        methods: {
+            async getDataFromApi () {
+                try{
+                    this.menu = false
+                    this.loading = true
+                    
+                    const {page, itemsPerPage } = this.options
+                    let query = JSON.stringify(this.query);
+                    let {data} = await this.$axios.get(`/administrador?query=${query}&limit=${itemsPerPage}&page=${page}`);
+                    this.rows = data.data;
+                    this.count = data.count;
+                    this.loading = false;
+                }catch(exception){
+                    this.loading = false;
+                    console.error(exception);
+                }
+            },
+            open(page){
+                this.$emit('page', page)
+            },
+            close(){
+                for(let key in this.form){
+                    this.form[key] = null;
+                }
+                this.dialog = false;
+            },
+            async store(){
+                try{
+                    let form = new FormData();
+                    for(let key in this.form){
+                        form.append(key, this.form[key]);
+                    }
+                    let {data} = await this.$axios.post('/catalogo/salones', form);
+                    if(!data.response){
+                        return;
+                    }
+                    this.close();
+                    this.getDataFromApi();
+                }catch(exception){
+                    console.log(exception)
+                }
+            },
+            async updated(){
+                try{
+                    let {data} = await this.$axios.put(`/catalogo/salones/${this.form.id}`, this.form);
+                    if(!data.response){
+                        return;
+                    }
+                    this.close();
+                    this.getDataFromApi();
+                }catch(exception){
+                    console.log(exception)
+                }
+            },
+            async remove(row){
+                try{
+                    console.log(row)
+                }catch(exception){
+                    console.log(exception)
+                }
+            }
+        },
+    }
+</script>
+
+<style>
+
+</style>

@@ -14,19 +14,17 @@ class Administrador(db.Model):
     apellidos=db.Column(db.String)
     correo=db.Column(db.String, unique=True)
     area_id=db.Column(db.Integer, db.ForeignKey('areas.id'))
-    estatus=db.Column(db.String)
+    estatus=db.Column(db.Integer)
     area=relationship(Areas, backref='administradores', uselist=False)
-    # area=relationship('Models.Areas.Areas', backref='administradores', uselist=False)
 
     @property
     def serialize(self):
-        # print(self.area)
         return {
             'id' : self.id,
             'nombre' : self.nombre,
             'apellidos' : self.apellidos,
             'correo' : self.correo,
-            # 'area_id' : self.area_id,
+            'area_id' : self.area_id,
             'estatus' : self.estatus,
             'area': self.area.serialize
         }
