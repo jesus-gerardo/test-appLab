@@ -10,7 +10,7 @@
                             <v-col cols="12">
                                 <v-text-field
                                     v-model="email"
-                                    label="Email"
+                                    label="Correo electrónico"
                                     dense
                                     outlined
                                     :rules="[rules.required, rules.email]"
@@ -22,7 +22,7 @@
                             <v-col cols="12">
                                 <v-text-field
                                     v-model="password"
-                                    label="Password"
+                                    label="Contraseña"
                                     type="password"
                                     dense
                                     outlined
@@ -52,8 +52,8 @@
         mixins: [RULES],
         data(){
             return {
-                email: null,
-                password: null,
+                email: 'admin@mail.com',
+                password: 'password',
                 overlay: false
             }
         }, methods: {
