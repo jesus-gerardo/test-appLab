@@ -1,7 +1,7 @@
 <template>
     <v-container fill-height>
         <v-layout align-center justify-center>
-            <v-card elevation="5" width="400">
+            <v-card elevation="6" width="400">
                 <v-card-title primary-title class="justify-center">Inicio de sesión</v-card-title>
 
                 <v-card-text>
@@ -12,18 +12,20 @@
                                     v-model="email"
                                     label="Email"
                                     dense
+                                    outlined
                                     :rules="[rules.required, rules.email]"
                                 ></v-text-field>
                             </v-col>
                         </v-row>
 
-                        <v-row>
+                        <v-row dense>
                             <v-col cols="12">
                                 <v-text-field
                                     v-model="password"
                                     label="Password"
                                     type="password"
                                     dense
+                                    outlined
                                     :rules="[rules.required]"
                                 ></v-text-field>
                             </v-col>
@@ -31,9 +33,7 @@
                     </v-form>
                 </v-card-text>
 
-                <v-card-actions>
-                    <v-btn color="primary">Register</v-btn>
-                    <v-spacer></v-spacer>
+                <v-card-actions class="d-flex justify-center">
                     <v-btn color="success" @click="login">Sign in</v-btn>
                 </v-card-actions>
             </v-card>

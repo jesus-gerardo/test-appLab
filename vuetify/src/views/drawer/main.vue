@@ -8,10 +8,9 @@
 
                 <v-list-item-content>
                     <v-list-item-title>Admin</v-list-item-title>
-                    <!-- <v-list-item-subtitle> Directivo, docente </v-list-item-subtitle> -->
                 </v-list-item-content>
 
-                <v-btn icon><v-icon>mdi-exit-to-app</v-icon></v-btn>
+                <v-btn icon @click="logout"><v-icon>mdi-exit-to-app</v-icon></v-btn>
             </v-list-item>
 
             <v-divider></v-divider>
@@ -19,7 +18,7 @@
             <v-list dense>
                 <template v-for="item in items">
                     <template v-if="item.children.length <= 0">
-                        <v-list-item  :key="item.title" link @click="routerTo(item.name)">
+                        <v-list-item :key="item.title" link @click="routerTo(item.name)">
                             <v-list-item-icon>
                                 <v-icon>{{ item.icon }}</v-icon>
                             </v-list-item-icon>
@@ -73,8 +72,6 @@
                 ],
                 
             }
-        }, beforeMount(){
-            // this.getUser();
         }, computed:{
             ...mapState({  
                 user: state => state.user
@@ -84,7 +81,16 @@
                 'getUser'
             ]),
             routerTo(name){
+                if(this.$route.name == name){
+                    return
+                }
                 this.$router.push({name: name});
+            },
+            logout(){
+                localStorage.clear();
+                this.$router.push({name: 'login'});
+
+
             }
         }
     }

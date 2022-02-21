@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from email.policy import default
 
 from sqlalchemy import true
 from utils.db import db
@@ -10,7 +11,7 @@ class Administrador(db.Model):
     __tablename__ = "administradores"
 
     id=db.Column(db.Integer, primary_key=True, autoincrement=True)
-    image=db.Column(db.String(200), nullable=True)
+    image=db.Column(db.String(200), nullable=True, default="no-imagen.png")
     nombre=db.Column(db.String(100))
     apellidos=db.Column(db.String(100))
     correo=db.Column(db.String(50), unique=True)

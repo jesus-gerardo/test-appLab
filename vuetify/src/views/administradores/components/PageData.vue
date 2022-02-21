@@ -225,9 +225,6 @@
         beforeMount(){
             this.getAreas();
         },
-        mounted(){
-            console.log(process.env.VUE_APP_URL);
-        },
         methods: {
             ...mapActions([
                 'getAreas'
@@ -277,7 +274,7 @@
                     }
                 }catch(exception){
                     this.overlay = false;
-                    console.log(exception)
+                    console.error(exception)
                 }
             }
         },

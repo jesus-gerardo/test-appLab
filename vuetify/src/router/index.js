@@ -39,6 +39,12 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next)=>{
+  if(to.name == 'login'){
+    if(localStorage.getItem('token')){
+      return next({name: 'admin'});
+    }
+  }
+
   if(to.meta.middleware){
     const middle = to.meta.middleware;
     const context = {to, from, next};

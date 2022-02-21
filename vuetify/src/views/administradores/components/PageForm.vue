@@ -144,7 +144,7 @@
                 },
                 file: null,
                 namePhoto: "no-imagen.png",
-                overlay: false
+                overlay: false,
             }
         }, mounted(){
             this.action = 0; // update
@@ -202,10 +202,10 @@
                     if(!data.response){
                         return;
                     }
-                    this.open('main');    
+                    this.open('success');    
                 }catch(exception){
                     this.overlay = false;
-                    console.log(exception)
+                    console.error(exception)
                 }
             },
         }
