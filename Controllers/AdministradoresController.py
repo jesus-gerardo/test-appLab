@@ -7,6 +7,7 @@ from flask_jwt_extended import jwt_required
 from werkzeug.utils import secure_filename
 import json
 import os
+from Request.AdministradoresRequest import AdministradoresRequest
 
 @jwt_required()
 def index():
@@ -35,22 +36,24 @@ def get_image(file):
 @jwt_required()
 def store():
     try:
+        form = AdministradoresRequest()
+        valid = form.load(request.form)
         if request.form.get('id', None) is None:
             admin = Administrador(
-                nombre = request.form['nombre'],
-                apellidos = request.form['apellidos'],
-                correo = request.form['correo'],
-                area_id = request.form['area_id'],
-                estatus = request.form['estatus']
+                nombre = valid.get('nombre'),
+                apellidos = valid.get('apellidos'),
+                correo = valid.get('correo'),
+                area_id = valid.get('area_id'),
+                estatus = valid.get('estatus')
             )
             db.session.add(admin)
         else:
             admin = Administrador.query.get(request.form.get('id'))
-            admin.nombre = request.form['nombre']
-            admin.apellidos = request.form['apellidos']
-            admin.correo = request.form['correo']
-            admin.area_id = request.form['area_id']
-            admin.estatus = request.form['estatus']
+            admin.nombre = valid.get('nombre')
+            admin.apellidos = valid.get('apellidos')
+            admin.correo = valid.get('correo')
+            admin.area_id = valid.get('area_id')
+            admin.estatus = valid.get('estatus')
 
         if 'upload' in request.files:
             file = request.files['upload']
